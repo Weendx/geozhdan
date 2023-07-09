@@ -4,3 +4,19 @@
   max-width: 240px;
   margin: 20px auto;
 }
+
+.map {
+  position: relative;
+  width: 500px;
+  height: 300px;
+  cursor: pointer;
+  overflow: scroll;
+  margin: 5rem auto;
+}
+
+.map img {
+  background-color: white;
+  position: absolute;
+  transform: scale(600%);
+}
+

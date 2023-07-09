@@ -10,12 +10,12 @@ import './Persik.css';
 const Persik = props => (
 	<Panel id={props.id}>
 		<PanelHeader
-			before={<PanelHeaderBack onClick={props.go} data-to="home"/>}
+			before={<PanelHeaderBack onClick={props.go} data-to="home" />}
 		>
 			Persik
 		</PanelHeader>
-		<img className="Persik" src={persik} alt="Persik The Cat"/>
-		<img className='map' src={map} alt="It's map"/>
+		<img className="Persik" src={persik} alt="Persik The Cat" />
+		<div className="map"><img src={map} /></div>
 	</Panel>
 );
 
