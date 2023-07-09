@@ -4,16 +4,18 @@ import PropTypes from 'prop-types';
 import { Panel, PanelHeader, PanelHeaderBack } from '@vkontakte/vkui';
 
 import persik from '../img/persik.png';
+import map from '../img/map.svg';
 import './Persik.css';
 
 const Persik = props => (
 	<Panel id={props.id}>
 		<PanelHeader
-			before={<PanelHeaderBack onClick={props.go} data-to="home"/>}
+			before={<PanelHeaderBack onClick={props.go} data-to="home" />}
 		>
 			Persik
 		</PanelHeader>
-		<img className="Persik" src={persik} alt="Persik The Cat"/>
+		<img className="Persik" src={persik} alt="Persik The Cat" />
+		<div className="map"><img src={map} /></div>
 	</Panel>
 );
 
