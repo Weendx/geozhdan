@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Panel, PanelHeader, PanelHeaderBack } from '@vkontakte/vkui';
 
 import persik from '../img/persik.png';
+import map from '../img/map.svg';
 import './Persik.css';
 
 const Persik = props => (
@@ -14,6 +15,7 @@ const Persik = props => (
 			Persik
 		</PanelHeader>
 		<img className="Persik" src={persik} alt="Persik The Cat"/>
+		<img className='map' src={map} alt="It's map"/>
 	</Panel>
 );
 
