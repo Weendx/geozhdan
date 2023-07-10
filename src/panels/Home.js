@@ -1,27 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Panel, PanelHeader, Header, Button, Group, Cell, Div, Avatar } from '@vkontakte/vkui';
+import "./Home.css"
+import qr from "../img/QR.png";
+
+import { Panel, PanelHeader, Header, Button, Group, Cell, Div, Avatar, Text } from '@vkontakte/vkui';
 
 const Home = ({ id, go, fetchedUser }) => (
 	<Panel id={id}>
-		<PanelHeader>Example</PanelHeader>
-		{fetchedUser &&
-		<Group header={<Header mode="secondary">User Data Fetched with VK Bridge</Header>}>
-			<Cell
-				before={fetchedUser.photo_200 ? <Avatar src={fetchedUser.photo_200}/> : null}
-				subtitle={fetchedUser.city && fetchedUser.city.title ? fetchedUser.city.title : ''}
-			>
-				{`${fetchedUser.first_name} ${fetchedUser.last_name}`}
-			</Cell>
-		</Group>}
+		<PanelHeader>Geozhdan</PanelHeader>
 
-		<Group header={<Header mode="secondary">Navigation Example</Header>}>
-			<Div>
-				<Button stretched size="l" mode="secondary" onClick={go} data-to="persik">
-					Show me the Persik, please
-				</Button>
-			</Div>
+		<Text id='manual'>Для начала найдите QR-код на площади им.Адьясова</Text>
+		<Group className='menuBattons'>
+			<Button stretched size='1' mode="secondary" onClick={go} data-to="map"><img stc={qr} ></img>QR-сканнер</Button> {/* Добавить переход!*/}
+			<Button stretched size="l" mode="secondary" onClick={go} data-to="map">Карта лагеря</Button>
 		</Group>
 	</Panel>
 );
@@ -29,14 +21,6 @@ const Home = ({ id, go, fetchedUser }) => (
 Home.propTypes = {
 	id: PropTypes.string.isRequired,
 	go: PropTypes.func.isRequired,
-	fetchedUser: PropTypes.shape({
-		photo_200: PropTypes.string,
-		first_name: PropTypes.string,
-		last_name: PropTypes.string,
-		city: PropTypes.shape({
-			title: PropTypes.string,
-		}),
-	}),
 };
 
 export default Home;
