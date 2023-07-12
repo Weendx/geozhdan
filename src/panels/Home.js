@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Panel, PanelHeader, Header, Button, Group, Cell, Div, Avatar } from '@vkontakte/vkui';
+import { Panel, PanelHeader, Header, Button, Group, Cell, Div, Avatar, ButtonGroup } from '@vkontakte/vkui';
 
 const Home = ({ id, go, fetchedUser }) => (
 	<Panel id={id}>
@@ -18,9 +18,14 @@ const Home = ({ id, go, fetchedUser }) => (
 
 		<Group header={<Header mode="secondary">Navigation Example</Header>}>
 			<Div>
-				<Button stretched size="l" mode="secondary" onClick={go} data-to="persik">
-					Show me the Persik, please
-				</Button>
+				<ButtonGroup mode="vertical" stretched="true">
+					<Button stretched size="l" mode="secondary" onClick={go} data-to="persik">
+						Show me the Persik, please
+					</Button>
+					<Button stretched size="l" mode="primary" onClick={go} data-to="map">
+						Show me the Map, please
+					</Button>
+				</ButtonGroup>
 			</Div>
 		</Group>
 	</Panel>
