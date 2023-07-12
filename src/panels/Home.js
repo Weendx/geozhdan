@@ -1,26 +1,35 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
 
 import "./Home.css"
-import qr from "../img/QR.png";
 
-import { Panel, PanelHeader, Text,Banner,Div, Title } from '@vkontakte/vkui';
+import { Panel, PanelHeader, Text, Banner, Div, Title } from '@vkontakte/vkui';
 import { Icon24Chevron } from '@vkontakte/icons';
 
-const Home = ({ id, go, fetchedUser }) => (
-	<Panel id={id} className='main-panel'>
-		<PanelHeader className='name-menu'>Главная</PanelHeader>
-		<Div>
-		<div className='info-panel'>
-			<Title className='info-name'>Открыто объектов</Title>
-			<Text className='info-text'>error</Text>
-			<Title className='info-name'>Дата последнего открытия</Title>
-			<Text className='info-text'>error</Text>
-		</div>
+const Home = ({ id, go}) => {
+	useEffect(() => {
+		const div = document.querySelector('.main-panel');
+		div.style.height = document.body.offsetHeight + 'px';
+	})
+	return (
+	<Panel id={id}  style={{boxSizing: 'border-box'}}>
+		<Div className='main-panel'>
+			<PanelHeader className='name-menu'>Главная</PanelHeader>
+			<div className='info-panel'>
+				<Text className='info-name'>Открыто объектов</Text>
+				<Text className='info-text'>1 объект из 0</Text>
+				<Text className='info-name'>Дата последнего открытия</Text>
+				<Text className='info-text'>09 февраля 2022</Text>
+			</div>
+			<div className='main__buttons'>
+				<Banner mode="image" asideMode='expand' className='banner' header="Карта лагеря" subheader="Открыть карту лагеря" background={<div style={{background: 'green'}} onClick={go} data-to='listOfPlaces'><Icon24Chevron style={{position: 'absolute', top: '50%', right: '16px', marginTop: '-12px'}}/></div>}></Banner>
+				<Banner mode="image" asideMode='expand' className='banner' header="Искать объекты" subheader="Открыть сканер QR-кода" background={<div style={{background: 'green'}} onClick={go} data-to='listOfPlaces'><Icon24Chevron style={{position: 'absolute', top: '50%', right: '16px', marginTop: '-12px'}}/></div>}></Banner>
+				<Banner mode="image" asideMode='expand' className='banner' header="Ваши открытия" subheader="Открыть список открытых объектов" background={<div style={{background: 'green'}} onClick={go} data-to='listOfPlaces'><Icon24Chevron style={{position: 'absolute', top: '50%', right: '16px', marginTop: '-12px'}}/></div>}></Banner>
+			</div>
 		</Div>
-		<Banner mode="image" header="Искать объекты" subheader="Открыть сканер QR-кодов" background={<div style={{background: 'green'}}><Icon24Chevron style={{position: 'absolute', top: '50%', right: '16px', marginTop: '-12px'}}/></div>}></Banner>
 	</Panel>
 );
+}
 
 Home.propTypes = {
 	id: PropTypes.string.isRequired,

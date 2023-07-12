@@ -1,16 +1,24 @@
 .main-panel {
-    height: 100hv;
+    /* display: flex;
+    flex-direction: column;
+    justify-content: space-between; */
+    box-sizing: border-box;
 }
 
 .info-panel {
-    margin: 2.31rem auto;
-    height: 8.625rem;
-    flex-shrink: 0;
+    /* width: 16.875rem; */
+    margin: 1.5rem 0.75rem 0 0.75rem;
+    /* height: 8.625rem; */
     border-radius: 0.625rem;
     background: #177D4C;
+    padding: 1.5rem 1rem;
+
+}
+.info-panel > * {
+    display: block;
 }
 
-.info-name {
+/* .info-name {
     padding: 0.69rem 1rem;
     display: flex;
     width: 14.875rem;
@@ -40,4 +48,23 @@
     line-height: normal;
     float:right;
     margin-right: 1rem;
+} */
+
+.info-name {
+    color: #E2E2E2;
+    font-size: 0.9em;
+    margin: 0.75rem 0;
+}
+.info-name:first-child {
+    margin-top: 0;
+}
+
+.info-text {
+    text-align: right;
+    color: white;
+}
+
+
+.main__buttons {
+    margin-top: 3rem;
 }
