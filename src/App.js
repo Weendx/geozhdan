@@ -6,6 +6,7 @@ import '@vkontakte/vkui/dist/vkui.css';
 import StartWindow from './panels/StartWindow';
 import Home from './panels/Home';
 import InitPageMap from './panels/InitPageMap';
+import ListOfPlaces from './panels/ListOfPlaces';
 
 const App = () => {
 	const [activePanel, setActivePanel] = useState('startWindow');
@@ -34,6 +35,7 @@ const App = () => {
 							<View activePanel={activePanel}>
 								<StartWindow id='startWindow' fetchedUser={fetchedUser} go={go} />
 								<Home id='home' go={go} />
+								<ListOfPlaces id='listOfPlaces' go={go} />
 								<InitPageMap id='map' go={go} />
 							</View>
 						</SplitCol>

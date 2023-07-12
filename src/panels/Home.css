@@ -1,6 +1,43 @@
-#manual {
-    font-size: 30px;
-    margin: 0 auto;
-    min-height: 1000px;
-    vertical-align: middle;
+.main-panel {
+    height: 100hv;
+}
+
+.info-panel {
+    margin: 2.31rem auto;
+    height: 8.625rem;
+    flex-shrink: 0;
+    border-radius: 0.625rem;
+    background: #177D4C;
+}
+
+.info-name {
+    padding: 0.69rem 1rem;
+    display: flex;
+    width: 14.875rem;
+    height: 1.5rem;
+    flex-direction: column;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #E2E2E2;
+    font-family: Montserrat;
+    font-size: 0.875rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.info-text {
+    display: block;
+    height: 1.25rem;
+    flex-direction: column;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #FFF;
+    font-family: Montserrat;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    float:right;
+    margin-right: 1rem;
 }
