@@ -24,7 +24,7 @@ const Home = ({ id, go}) => {
 			<div className='main__buttons'>
 				<Banner mode="image" asideMode='expand' className='banner' header="Карта лагеря" subheader="Открыть карту лагеря" background={<div style={{background: 'green'}} onClick={go} data-to='listOfPlaces'><Icon24Chevron style={{position: 'absolute', top: '50%', right: '16px', marginTop: '-12px'}}/></div>}></Banner>
 				<Banner mode="image" asideMode='expand' className='banner' header="Искать объекты" subheader="Открыть сканер QR-кода" background={<div style={{background: 'green'}} onClick={go} data-to='listOfPlaces'><Icon24Chevron style={{position: 'absolute', top: '50%', right: '16px', marginTop: '-12px'}}/></div>}></Banner>
-				<Banner mode="image" asideMode='expand' className='banner' header="Ваши открытия" subheader="Открыть список открытых объектов" background={<div style={{background: 'green'}} onClick={go} data-to='listOfPlaces'><Icon24Chevron style={{position: 'absolute', top: '50%', right: '16px', marginTop: '-12px'}}/></div>}></Banner>
+				<Banner mode="image" asideMode='expand' className='banner' header="Ваши открытия" subheader="Показать открытые объекты" background={<div style={{background: 'green'}} onClick={go} data-to='listOfPlaces'><Icon24Chevron style={{position: 'absolute', top: '50%', right: '16px', marginTop: '-12px'}}/></div>}></Banner>
 			</div>
 		</Div>
 	</Panel>

@@ -1,14 +1,9 @@
 .main-panel {
-    /* display: flex;
-    flex-direction: column;
-    justify-content: space-between; */
     box-sizing: border-box;
 }
 
 .info-panel {
-    /* width: 16.875rem; */
     margin: 1.5rem 0.75rem 0 0.75rem;
-    /* height: 8.625rem; */
     border-radius: 0.625rem;
     background: #177D4C;
     padding: 1.5rem 1rem;
@@ -17,38 +12,6 @@
 .info-panel > * {
     display: block;
 }
-
-/* .info-name {
-    padding: 0.69rem 1rem;
-    display: flex;
-    width: 14.875rem;
-    height: 1.5rem;
-    flex-direction: column;
-    justify-content: center;
-    flex-shrink: 0;
-    color: #E2E2E2;
-    font-family: Montserrat;
-    font-size: 0.875rem;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-}
-
-.info-text {
-    display: block;
-    height: 1.25rem;
-    flex-direction: column;
-    justify-content: center;
-    flex-shrink: 0;
-    color: #FFF;
-    font-family: Montserrat;
-    font-size: 1rem;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-    float:right;
-    margin-right: 1rem;
-} */
 
 .info-name {
     color: #E2E2E2;
@@ -66,5 +29,22 @@
 
 
 .main__buttons {
-    margin-top: 3rem;
+    margin-top: 5rem;
+}
+
+.banner {
+    font-size: 5rem;
+}
+
+.vkuiBanner__content {
+    padding: 0.5rem 0 0.5rem 0;
+
+}
+
+.vkuiBanner__header {
+    font-weight: 600;
+}
+
+.vkuiBanner__subheader {
+    padding: 0.2rem 0 0 0;
 }
