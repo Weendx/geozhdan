@@ -1,9 +1,10 @@
 .main-panel {
     box-sizing: border-box;
+    font-size: 15%;
 }
 
 .info-panel {
-    margin: 1.5rem 0.75rem 0 0.75rem;
+    margin: 5rem 0.75rem 0 0.75rem;
     border-radius: 0.625rem;
     background: #177D4C;
     padding: 1.5rem 1rem;
@@ -15,7 +16,7 @@
 
 .info-name {
     color: #E2E2E2;
-    font-size: 0.9em;
+    font-size: 0.9rem;
     margin: 0.75rem 0;
 }
 .info-name:first-child {
@@ -29,11 +30,7 @@
 
 
 .main__buttons {
-    margin-top: 5rem;
-}
-
-.banner {
-    font-size: 5rem;
+    margin-top: 13rem;
 }
 
 .vkuiBanner__content {
