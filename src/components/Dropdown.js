@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import {Text} from '@vkontakte/vkui';
 
-import "./DropPlaces.css";
+import "./Dropdown.css";
 
 import start from "../img/start.png";
 
