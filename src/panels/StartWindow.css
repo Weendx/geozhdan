@@ -26,27 +26,45 @@
     color:black;
 }
 
-@media only screen and (max-width: 500px) {
-    .main-logo {
-        width: 18rem;
-    }
-    
-}
-
-@media only screen and (max-width: 300px) {
+@media only screen and (max-width: 1000px) {
     .main-logo {
         margin: auto;
-        width: 15rem;
+        width: 40rem;
+    }
+    
+    .button_start {
+        margin-bottom: 5rem;
     }
 }
 
 @media only screen and (max-width: 500px) {
     .main-logo {
-        margin:  5rem auto 0 auto;
         width: 18rem;
     }
 
     .button_start {
         margin-bottom: 13rem;        
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    .main-logo {
+        margin: auto;
+        width: 15rem;
+    }
+
+    .button_start {
+        margin-bottom: 7rem;
+    }
+}
+
+@media only screen and (max-width: 300px) {
+    .main-logo {
+        margin: auto;
+        width: 12rem;
+    }
+
+    .button_start {
+        margin-bottom: 10rem;
     }
 }
