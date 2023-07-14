@@ -32,3 +32,21 @@
     }
     
 }
+
+@media only screen and (max-width: 300px) {
+    .main-logo {
+        margin: auto;
+        width: 15rem;
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    .main-logo {
+        margin:  5rem auto 0 auto;
+        width: 18rem;
+    }
+
+    .button_start {
+        margin-bottom: 13rem;        
+    }
+}
