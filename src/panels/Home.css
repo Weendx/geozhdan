@@ -1,0 +1,47 @@
+.main-panel {
+    box-sizing: border-box;
+    font-size: 15%;
+}
+
+.info-panel {
+    margin: 5rem 0.75rem 0 0.75rem;
+    border-radius: 0.625rem;
+    background: #177D4C;
+    padding: 1.5rem 1rem;
+
+}
+.info-panel > * {
+    display: block;
+}
+
+.info-name {
+    color: #E2E2E2;
+    font-size: 0.9rem;
+    margin: 0.75rem 0;
+}
+.info-name:first-child {
+    margin-top: 0;
+}
+
+.info-text {
+    text-align: right;
+    color: white;
+}
+
+
+.main__buttons {
+    margin-top: 13rem;
+}
+
+.vkuiBanner__content {
+    padding: 0.5rem 0 0.5rem 0;
+
+}
+
+.vkuiBanner__header {
+    font-weight: 600;
+}
+
+.vkuiBanner__subheader {
+    padding: 0.2rem 0 0 0;
+}
