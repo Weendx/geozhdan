@@ -1,47 +1,41 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
 
-import { Panel, PanelHeader, Header, Button, Group, Cell, Div, Avatar, ButtonGroup } from '@vkontakte/vkui';
+import "./Home.css"
 
-const Home = ({ id, go, fetchedUser }) => (
-	<Panel id={id}>
-		<PanelHeader>Example</PanelHeader>
-		{fetchedUser &&
-		<Group header={<Header mode="secondary">User Data Fetched with VK Bridge</Header>}>
-			<Cell
-				before={fetchedUser.photo_200 ? <Avatar src={fetchedUser.photo_200}/> : null}
-				subtitle={fetchedUser.city && fetchedUser.city.title ? fetchedUser.city.title : ''}
-			>
-				{`${fetchedUser.first_name} ${fetchedUser.last_name}`}
-			</Cell>
-		</Group>}
+import { Panel, PanelHeader, Text, Banner, Div, Title } from '@vkontakte/vkui';
+import { Icon24Chevron } from '@vkontakte/icons';
 
-		<Group header={<Header mode="secondary">Navigation Example</Header>}>
+const Home = ({ id, go}) => {
+	useEffect(() => {
+		const div = document.querySelector('.main-panel');
+		div.style.height = document.body.offsetHeight + 'px';
+	})
+	return (
+	<Panel id={id}  style={{boxSizing: 'border-box'}}>
+		<div className='main-panel'>
+			<PanelHeader className='name-menu'>Главная</PanelHeader>
 			<Div>
-				<ButtonGroup mode="vertical" stretched="true">
-					<Button stretched size="l" mode="secondary" onClick={go} data-to="persik">
-						Show me the Persik, please
-					</Button>
-					<Button stretched size="l" mode="primary" onClick={go} data-to="map">
-						Show me the Map, please
-					</Button>
-				</ButtonGroup>
+			<div className='info-panel'>
+				<Text className='info-name'>Открыто объектов</Text>
+				<Text className='info-text'>1 объект из 0</Text>
+				<Text className='info-name'>Дата последнего открытия</Text>
+				<Text className='info-text'>09 февраля 2022</Text>
+			</div>
 			</Div>
-		</Group>
+			<div className='main__buttons'>
+				<Banner mode="image" asideMode='expand' className='banner' header="Карта лагеря" subheader="Открыть карту лагеря" background={<div style={{background: 'green'}}><Icon24Chevron style={{position: 'absolute', top: '50%', right: '16px', marginTop: '-12px'}}/></div>} onClick={go} data-to='listOfPlaces'></Banner>
+				<Banner mode="image" asideMode='expand' className='banner' header="Искать объекты" subheader="Открыть сканер QR-кода" background={<div style={{background: 'green'}}><Icon24Chevron style={{position: 'absolute', top: '50%', right: '16px', marginTop: '-12px'}}/></div>} onClick={go} data-to='listOfPlaces'></Banner>
+				<Banner mode="image" asideMode='expand' className='banner' header="Ваши открытия" subheader="Показать открытые объекты" background={<div style={{background: 'green'}}><Icon24Chevron style={{position: 'absolute', top: '50%', right: '16px', marginTop: '-12px'}}/></div>} onClick={go} data-to='listOfPlaces'></Banner>
+			</div>
+		</div>
 	</Panel>
 );
+}
 
 Home.propTypes = {
 	id: PropTypes.string.isRequired,
 	go: PropTypes.func.isRequired,
-	fetchedUser: PropTypes.shape({
-		photo_200: PropTypes.string,
-		first_name: PropTypes.string,
-		last_name: PropTypes.string,
-		city: PropTypes.shape({
-			title: PropTypes.string,
-		}),
-	}),
 };
 
 export default Home;
