@@ -7,6 +7,7 @@ import StartWindow from './panels/StartWindow';
 import Home from './panels/Home';
 import MapPanel from './panels/MapPanel';
 import ListOfPlaces from './panels/ListOfPlaces';
+import Info from './panels/Info';
 
 const App = () => {
 	const [activePanel, setActivePanel] = useState('startWindow');
@@ -37,6 +38,7 @@ const App = () => {
 								<Home id='home' go={go} />
 								<ListOfPlaces id='listOfPlaces' go={go} />
 								<MapPanel id='map' go={go} />
+								<Info id='info' go={go} />
 							</View>
 						</SplitCol>
 					</SplitLayout>

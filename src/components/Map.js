@@ -103,4 +103,3 @@ Map.proptypes = {
 }
 
 export default Map;
-

@@ -38,7 +38,7 @@ const MapPanel = props => {
 		>
 			Карта
 		</PanelHeader>
-		<Map id="mappanel__map" markers={markers}/>
+		<Map id="mappanel__map" markers={'markers' in props ? props.markers : [] }/>
 	</Panel>
     );
 }
