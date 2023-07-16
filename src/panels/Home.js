@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import PropTypes from 'prop-types';
+import PropTypes, { object } from 'prop-types';
 import bridge from "@vkontakte/vk-bridge";
 
 import "./Home.css"
@@ -17,44 +17,58 @@ const getObjectsString = (count) => {
 	else
 		return count + ' объектов';
 }
-const formatTime = (timestamp_seconds) => {
-	if (timestamp_seconds == -1)
+const formatTime = (timestamp_ms) => {
+	if (timestamp_ms == -1)
 		return "Открытых объектов ещё нет";
-	const dt = new Date(timestamp_seconds*1000);
+	const dt = new Date(timestamp_ms);
 	const months = ['января', "февраля", "марта", "апреля", "мая", 
 	"июня", "июля", "сентября", "октября", "ноября", "декабря"];
-	return `${dt.getDate()} ${months[dt.getMonth() - 1]} ${dt.getFullYear()}`;
+
+	const zeroify = (num) => {
+		if (num < 10)
+			return '0' + num;
+		return num;
+	}
+
+	const date = `${dt.getDate()} ${months[dt.getMonth() - 1]} ${dt.getFullYear()}`;
+	const time = `${zeroify(dt.getHours())}:${zeroify(dt.getMinutes())}`;
+	return  `${date} в ${time}`;
 }
 
 const openQRCodeScanner = () => { bridge.send("VKWebAppOpenCodeReader"); }
 
-const Home = ({ id, go, dbData, updateDB }) => {
+const Home = ({ id, go, dbData, activateModal, qr_ok_setobject }) => {
 	const [objs, setObjCount] = useState('1');
 	const [qrResult, setQRResult] = useState('<none>');
+	const [toUpdate, doUpdate] = useState('');
 	
-
-	// Подписывается на события, отправленные нативным клиентом
-	bridge.subscribe(event => {
-		if (!event.detail) {
-			return;
-		}
-		switch(event.detail.type) {
-			case 'VKWebAppOpenCodeReaderResult':
-				// Обработка события в случае успеха
-				const data = event.detail.data.code_data;
-				setQRResult(data);
-
-				break;
-			case 'VKWebAppOpenCodeReaderFailed':
-				// Обработка события в случае ошибки
-				console.log(event.detail.data.error_type, event.detail.data.error_data);      
-			break;
-		}
-	});
-
-	const addObjectToList = () => {
-		dbData.opened_objects.push(8, 9);
-		updateDB(dbData);
+	// --- +++ --- +++ ---
+	const findObject = async (object_code) => {
+		let queryData = {
+			"collection": "objects",
+			"database": "geozhdan",
+			"dataSource": "geozhdan-main-db",
+			"filter": {"code": object_code}
+		};
+		const response = await fetch('https://randomgod.7m.pl/rerequester.php', {
+			method: 'POST',
+			headers: {
+				"request-url": "https://eu-central-1.aws.data.mongodb-api.com/app/data-tvcew/endpoint/data/v1/action/findOne",
+				'api-key': 'ODO1Pv2mQ0kzyqYmsviHtibJmiovEp9iJ0pKkoAsx32EMT4MCVcyzXvScJ20wITb',
+				'Content-Type': 'application/x-www-form-urlencoded'
+			},
+			body: "json="+encodeURIComponent(JSON.stringify(queryData))
+		});
+		const data = await response.json();
+		if (!('document' in data && data.document))
+			return {};
+		return data.document;
+	}
+	const addObjectToList = (object_id) => {
+		if (dbData.opened_objects.indexOf(object_id) > -1)
+			return false;
+		dbData.opened_objects.push(object_id);
+		dbData.last_opened_object_ts = Date.now();
 		let queryData = {
 			"collection": "main",
 			"database": "geozhdan",
@@ -72,13 +86,49 @@ const Home = ({ id, go, dbData, updateDB }) => {
 			},
 			body: "json="+encodeURIComponent(JSON.stringify(queryData))
 		});
+		return true;
 	}
+
+	// Подписывается на события, отправленные нативным клиентом
+	bridge.subscribe(async (event) => {
+		if (!event.detail) {
+			return;
+		}
+		switch(event.detail.type) {
+			case 'VKWebAppOpenCodeReaderResult':
+				// Обработка события в случае успеха
+				console.log(event.detail);
+				const data = event.detail.data.code_data;
+				const obj = await findObject(data);
+				setQRResult(obj);
+				if (!obj.hasOwnProperty('id')) {
+					activateModal('qr-error');
+				} else {
+					qr_ok_setobject(obj.title);
+					const res = addObjectToList(obj.id);
+					if (res)
+						activateModal('qr-ok');
+					else
+						activateModal('qr-exists');
+				}
+				break;
+			case 'VKWebAppOpenCodeReaderFailed':
+				// Обработка события в случае ошибки
+				console.log(event.detail.data.error_type, event.detail.data.error_data); 
+				activateModal('qr-error');     
+			break;
+		}
+	});
+
+	
 
 	useEffect(() => {
 		const div = document.querySelector('.main-panel');
 		div.style.height = document.body.offsetHeight + 'px';
-		addObjectToList();
 	})
+
+	// -- render section --
+
 
 	return (
 	<Panel id={id}  style={{boxSizing: 'border-box'}}>
@@ -87,11 +137,12 @@ const Home = ({ id, go, dbData, updateDB }) => {
 			<Div>
 			<div className='info-panel'>
 				<Text className='info-name'>Открыто объектов</Text>
-				<Text className='info-text'>{getObjectsString(dbData.opened_objects.length)} из {objs}</Text>
+				<Text className='info-text'>{getObjectsString(dbData.opened_objects.length)} из {objects.length}{toUpdate}</Text>
 				<Text className='info-name'>Дата последнего открытия</Text>
-				<Text className='info-text'>{formatTime(dbData.last_opened_object_ts)}</Text>
+				<Text className='info-text'>{formatTime(dbData.last_opened_object_ts)}{toUpdate}</Text>
 			</div>
 			<p>dbdata: {JSON.stringify(dbData)}</p>
+			<p>fetchobj: {JSON.stringify(qrResult)}</p>
 			</Div>
 			<div className='main__buttons'>
 				<Banner mode="image" asideMode='expand' className='banner' header="Карта лагеря" subheader="Открыть карту лагеря" background={<div style={{background: 'green'}}><Icon24Chevron style={{position: 'absolute', top: '50%', right: '16px', marginTop: '-12px'}}/></div>} onClick={go} data-to='map'></Banner>
@@ -107,7 +158,8 @@ Home.propTypes = {
 	id: PropTypes.string.isRequired,
 	go: PropTypes.func.isRequired,
 	dbData: PropTypes.object.isRequired,
-	updateDB: PropTypes.func.isRequired
+	qr_ok_setobject: PropTypes.func.isRequired,
+	objects: PropTypes.object.isRequired
 };
 
 export default Home;
