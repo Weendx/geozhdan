@@ -46,7 +46,7 @@ const MapPanel = props => {
 		>
 			Карта
 		</PanelHeader>
-		<Map id="mappanel__map" markers={markers} centerAt={mapShift}/>
+		<Map id="mappanel__map" markers={'markers' in props ? props.markers : [] }/>
 	</Panel>
     );
 }

@@ -10,7 +10,7 @@ import MapPanel from './panels/MapPanel';
 import ListOfPlaces from './panels/ListOfPlaces';
 // import QRCodeView from './panels/QRCodeView';
 import './App.css';
-import { object } from 'prop-types';
+import Info from './panels/Info';
 
 const SERVKEY = '8h1-3kh@jns';
 
@@ -197,6 +197,7 @@ const App = () => {
 								<ListOfPlaces id='listOfPlaces' go={go} />
 								<MapPanel id='map' go={go} />
 								{/* <QRCodeView id='qrscanner' go={go} /> */}
+								<Info id='info' go={go} />
 							</View>
 						</SplitCol>
 					</SplitLayout>

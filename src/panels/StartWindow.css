@@ -9,15 +9,12 @@
 .main-logo {
     width: 24rem;
     height: auto;
-    margin: 0 auto;
-    margin-top: 4rem;
 }
 
 .button_start {
-    display: none;
+    /* display: none; */
     width: 15rem;
     height: 3.75rem;
-    /* margin: 7rem auto 0 auto; */
     margin: 0 auto;
     margin-bottom: 7rem;
     background: #F3EF7D;
@@ -31,6 +28,7 @@
     .main-logo {
         margin: auto;
         width: 40rem;
+        margin-top: 1rem;
     }
     
     .button_start {
@@ -41,6 +39,7 @@
 @media only screen and (max-width: 500px) {
     .main-logo {
         width: 18rem;
+        margin-top: 12rem;
     }
 
     .button_start {
@@ -52,6 +51,7 @@
     .main-logo {
         margin: auto;
         width: 15rem;
+        margin-top: 6rem;
     }
 
     .button_start {
@@ -63,6 +63,7 @@
     .main-logo {
         margin: auto;
         width: 12rem;
+        margin-top: 8rem;
     }
 
     .button_start {

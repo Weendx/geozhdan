@@ -8,7 +8,6 @@ import './Map.css'
 import Marker from './Marker.js'
 
 const scale = 8;
-// const mapSizing = {x: }
 
 const Map = ( props ) => {
     console.log(props.markers)
