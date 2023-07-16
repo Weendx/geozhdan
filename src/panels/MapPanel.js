@@ -13,6 +13,7 @@ let markers = [
     {"name": "Marker nast.tennis", "posX": 192, "posY": 115},
     {"name": "zero", "posX": 0, "posY": 0}
 ];
+// {"name": 12, "desc": 12, "info": 12, "id": 1, "dest": "132", "markerPos": {x: 1, y: 2}}
 
 const MapPanel = props => {
 
