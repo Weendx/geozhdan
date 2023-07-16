@@ -5,8 +5,87 @@
     box-sizing: border-box;
 }
 
-.vkuiPanelHeaderButton--ios .vkuiIcon--28 {
+.vkuiPanelHeaderButton--android .vkuiIcon--28 {
     padding: 0;
+}
+
+@media only screen and (max-width:1000px){
+    .info-main {
+        background: #177D4C;
+        margin: 1rem auto;
+        border-radius: 0.625rem;
+        padding: 1.5rem 1rem;
+    }
+
+    .info-main > * {
+        display: block;
+    }
+
+    .vkuiPanelHeader--ios .vkuiPanelHeader__content-in {
+        font-size: 2rem;
+        font-weight: 600;
+    }
+
+    .info-main-name {
+        font-family: Montserrat;
+        font-weight: 500;
+        font-size: 1.5rem;
+        margin: 1rem 0;
+    }
+
+    .info-main-name:first-child {
+        margin-top: 0;
+    }
+
+    .info-main-text {
+        font-family: Montserrat;
+        font-size: 2rem;
+        font-weight: 500;
+        margin-left: 2rem;
+    }
+
+    .details {
+        margin-top: 5rem;
+        border-radius: 0.25rem;
+        background: #81d79a;
+        color: #000;
+        padding-bottom:0.5rem;
+    }
+
+    .details-name {
+        border-radius: 0.25rem;
+        background: #0dbd00;
+    }
+
+    .details-text-name {
+        margin: 1rem 0.5rem;
+        color: #000;
+        font-family: Montserrat;
+        font-size: 2rem;
+        font-style: italic;
+        font-weight: 600;
+        line-height: normal;
+    }
+
+    .details-text {
+        margin: 0.5rem;
+        color: #000;
+        font-family: Montserrat;
+        font-size: 1.5rem;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+    }
+
+    .map_sqare {
+        margin-top: 5rem;
+        border-radius: 0.25rem;
+        background: #3FCB56;
+        width: 100%;
+        font-size: 2rem;
+        font-weight: 600;
+        padding: 1rem;
+    }
 }
 
 @media only screen and (max-width:500px){
