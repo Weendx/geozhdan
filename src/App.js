@@ -25,8 +25,10 @@ const App = () => {
 	const [popout, setPopout] = useState(<ScreenSpinner size='large' />);
 
 	const [dbData, setDBData] = useState({});
-	const [objList, setObjList] = useState({});
+	const [objList, setObjList] = useState([]);
 	const [modalQROkObject, setQROkObject] = useState('Геождан');
+	const [selectedObject, selectObject] = useState(null);
+	const [prevPanelId, setPrevPanelId] = useState(null);
 	const [testText, setTestText] = useState('testtext');
 
 	const loadUserData = async (vk_userid) => {
@@ -99,7 +101,8 @@ const App = () => {
 		async function fetchData() {
 			const user = await bridge.send('VKWebAppGetUserInfo');
 			setUser(user);
-			
+			// const user = {id: 192701245}
+
 			const data = await loadUserData(user.id);
 			if (data) {
 				const objects = await loadObjectList(data.opened_objects);
@@ -139,6 +142,18 @@ const App = () => {
 	}, []);
 
 	const go = e => {
+		console.log(e.currentTarget.dataset);
+		setPrevPanelId(null);
+		if (['info', 'map'].indexOf(e.currentTarget.dataset.to) == -1) {
+			selectObject(null);
+		}
+		if (e.currentTarget.dataset.hasOwnProperty('selected_object_id')) {
+			const id = e.currentTarget.dataset.selected_object_id;
+			selectObject(Number(id));
+		}
+		if (e.currentTarget.dataset.hasOwnProperty('prev_panel_id')) {
+			setPrevPanelId(e.currentTarget.dataset.prev_panel_id);
+		}
 		setActivePanel(e.currentTarget.dataset.to);
 	};
 
@@ -148,7 +163,7 @@ const App = () => {
 		    <ModalCard 
 				id="faq" 
 				onClose={() => {setActiveModal(null); setActivePanel('home'); }}
-				header="Вы попали в приложение «Геождан»!"
+				header="Добро пожаловать в «Геождан»!"
 				subheader="Теперь у вас есть карманная карта, а ещё справочник по ждановским объектам. Находите и сканируйте QR-коды, размещенные на объектах лагеря. Это позволит легче находить лагерные места и информацию о них в будущем. Приятного пользования!"
 				actions={
 					<Button className="modal__button_primary" size="l" mode="primary" stretched onClick={() => {setActiveModal(null); setActivePanel('home'); }}>Поехали</Button>
@@ -190,14 +205,13 @@ const App = () => {
 				<AppRoot>
 					<SplitLayout popout={popout} modal={modal}>
 						<SplitCol>
-							<p>{testText}</p>
+							{/* <p>{testText}</p> */}
 							<View activePanel={activePanel}>
 								<StartWindow id='startWindow' go={go} />
-								<Home id='home' go={go} dbData={dbData} activateModal={setActiveModal} qr_ok_setobject={setQROkObject} objects={objList} />
-								<ListOfPlaces id='listOfPlaces' go={go} />
-								<MapPanel id='map' go={go} />
-								{/* <QRCodeView id='qrscanner' go={go} /> */}
-								<Info id='info' go={go} />
+								<Home id='home' go={go} dbData={dbData} activateModal={setActiveModal} qr_ok_setobject={setQROkObject} objects={objList} setPopout={setPopout} />
+								<ListOfPlaces id='listOfPlaces' go={go} dbData={dbData} objects={objList} />
+								<MapPanel id='map' go={go} objects={objList} targetObjectId={selectedObject} prevPanelId={prevPanelId} />
+								<Info id='info' go={go} objects={objList} targetObjectId={selectedObject} />
 							</View>
 						</SplitCol>
 					</SplitLayout>

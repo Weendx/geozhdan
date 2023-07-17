@@ -1,3 +1,51 @@
 .modal__button_primary {
     background: green !important;
 }
+
+/* Корректировки */
+.info-name {
+    font-weight: 500;
+}
+.info-panel {
+    margin: 1.5rem auto 0 auto;
+}
+.main__buttons {
+    margin-top: 5rem;
+}
+
+
+@media only screen and (max-width: 400px) {
+    .info-text {
+        font-size: 0.9em;
+    }
+    .vkuiBanner__subheader {
+        font-size: 0.9em;
+    }
+}
+@media only screen and (max-width: 500px) and (min-width: 400px) {
+    .vkuiBanner__header {
+        font-size: 1em;
+        font-weight: 600;
+    }
+    .info-name {
+        font-size: 1em;
+    }
+}
+@media only screen and (max-width: 1000px) and (min-width: 500px) {
+    .vkuiBanner__header {
+        font-size: 1.3em;
+        font-weight: 600;
+    } 
+    .vkuiBanner__subheader {
+        font-size: 1.3em;
+    }
+    .info-name {
+        font-size: 1.25em;
+    }
+    .info-text {
+        font-size: 1.3em;
+    }
+    .info-panel {
+        padding: 2rem 1rem;
+    }
+}

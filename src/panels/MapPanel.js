@@ -4,7 +4,7 @@ import { Panel, PanelHeader, PanelHeaderBack } from '@vkontakte/vkui';
 
 import Map from '../components/Map.js'
 
-let markers = [
+let markers_const = [
     {"name": "Marker Central", "posX": 56, "posY": 83, onClick: () => {alert("им. Адясова")}},
 	{"name": "Marker Adm", "posX": 55, "posY": 56.5},
     {"name": "Marker Warehouse", "posX": 80, "posY": 54},
@@ -19,7 +19,11 @@ const MapPanel = props => {
 
     const headerRef = useRef(null);
     const mapRef = useRef(null);
-    const [mapShift, setShift] = useState({x: 10, y: 49});
+    
+    const [prevPanelId, setPrevPanelId] = useState('home');
+    const [mapCenterAt, setMapCenter] = useState({x: 0, y: 0});
+    const [markers, setMarkers] = useState([]);
+
 
     useEffect(() => {
         if (headerRef.current == null)
@@ -38,15 +42,33 @@ const MapPanel = props => {
         }
     }, [headerRef, mapRef]);
 
+    useEffect(() => {
+        if (props.hasOwnProperty('targetObjectId') && props.hasOwnProperty('objects') && props.targetObjectId) {
+            const objectsClone = JSON.parse(JSON.stringify(props.objects));
+            objectsClone.map(obj => {
+                if (obj.id == props.targetObjectId) {
+                    setMarkers([{"name": "Marker", "posX": obj.position.x, "posY": obj.position.y}])
+                    setMapCenter({x: obj.position.x, y: obj.position.y});
+                    console.log('Find marker:', markers, mapCenterAt)
+                    return;
+                }
+            });
+        }
+        if (props.hasOwnProperty('prevPanelId') && props.prevPanelId) {
+            setPrevPanelId(props.prevPanelId);
+        }
+    }, [])
+    
+
     return (
     <Panel id={props.id}>
 		<PanelHeader
-			before={<PanelHeaderBack onClick={props.go} data-to="home" />}
+			before={<PanelHeaderBack onClick={props.go} data-to={prevPanelId} />}
             id="mappanel__header"
 		>
 			Карта
 		</PanelHeader>
-		<Map id="mappanel__map" markers={'markers' in props ? props.markers : [] }/>
+		<Map id="mappanel__map" markers={markers} centerAt={mapCenterAt}/>
 	</Panel>
     );
 }
@@ -54,7 +76,10 @@ const MapPanel = props => {
 MapPanel.propTypes = {
 	id: PropTypes.string.isRequired,
 	go: PropTypes.func.isRequired,
-    mapCenterAt: PropTypes.array // {x: 0, y: 0}
+    objects: PropTypes.array,
+    targetObjectId: PropTypes.number,
+    mapCenterAt: PropTypes.array, // {x: 0, y: 0}
+    prevPanelId: PropTypes.string
 };
 
 export default MapPanel;

@@ -4,7 +4,7 @@ import bridge from "@vkontakte/vk-bridge";
 
 import "./Home.css"
 
-import { Panel, PanelHeader, Text, Banner, Div, Title } from '@vkontakte/vkui';
+import { Panel, PanelHeader, Text, Banner, Div, Title, ScreenSpinner } from '@vkontakte/vkui';
 import { Icon24Chevron } from '@vkontakte/icons';
 
 
@@ -37,10 +37,11 @@ const formatTime = (timestamp_ms) => {
 
 const openQRCodeScanner = () => { bridge.send("VKWebAppOpenCodeReader"); }
 
-const Home = ({ id, go, dbData, activateModal, qr_ok_setobject }) => {
+const Home = ({ id, go, dbData, activateModal, qr_ok_setobject, objects, setPopout }) => {
 	const [objs, setObjCount] = useState('1');
 	const [qrResult, setQRResult] = useState('<none>');
 	const [toUpdate, doUpdate] = useState('');
+	const [qrProcessing, setQrProcessing] = useState(false);
 	
 	// --- +++ --- +++ ---
 	const findObject = async (object_code) => {
@@ -64,20 +65,25 @@ const Home = ({ id, go, dbData, activateModal, qr_ok_setobject }) => {
 			return {};
 		return data.document;
 	}
-	const addObjectToList = (object_id) => {
+	const addObjectToList = async (object_id) => {
 		if (dbData.opened_objects.indexOf(object_id) > -1)
-			return false;
-		dbData.opened_objects.push(object_id);
+			return 0;
+		console.log('addObjectToList():', dbData, dbData.opened_objects.indexOf(object_id));
 		dbData.last_opened_object_ts = Date.now();
+		dbData.opened_objects.push(object_id);
+		let newObj = JSON.parse(JSON.stringify(dbData));
+		// newObj.last_opened_object_ts = Date.now();
+		// newObj.opened_objects.push(object_id);
+		delete newObj['_id'];
 		let queryData = {
 			"collection": "main",
 			"database": "geozhdan",
 			"dataSource": "geozhdan-main-db",
 			"upsert": false,
 			"filter": {"vk_userid": dbData.vk_userid},
-			"update": dbData
+			"update": newObj
 		};
-		fetch('https://randomgod.7m.pl/rerequester.php', {
+		const response = await fetch('https://randomgod.7m.pl/rerequester.php', {
 			method: 'POST',
 			headers: {
 				"request-url": "https://eu-central-1.aws.data.mongodb-api.com/app/data-tvcew/endpoint/data/v1/action/updateOne",
@@ -86,36 +92,145 @@ const Home = ({ id, go, dbData, activateModal, qr_ok_setobject }) => {
 			},
 			body: "json="+encodeURIComponent(JSON.stringify(queryData))
 		});
-		return true;
+		const data = await response.json();
+		// setQRResult(data);
+		if (data.modifiedCount > 0)
+			return 1;
+		return 2;
 	}
 
 	// Подписывается на события, отправленные нативным клиентом
-	bridge.subscribe(async (event) => {
+	bridge.subscribe((event) => {
 		if (!event.detail) {
 			return;
 		}
 		switch(event.detail.type) {
 			case 'VKWebAppOpenCodeReaderResult':
 				// Обработка события в случае успеха
-				console.log(event.detail);
-				const data = event.detail.data.code_data;
-				const obj = await findObject(data);
-				setQRResult(obj);
-				if (!obj.hasOwnProperty('id')) {
+				console.log('bridge event.detail >>', event.detail);
+
+				const code = event.detail.data.code_data;
+				let isFound = false;
+				setPopout(<ScreenSpinner size='large' />);
+				objects.map(obj => {
+					if (obj.code == code) {
+						isFound = true;
+						if (dbData.opened_objects.indexOf(obj.id) == -1) {
+							qr_ok_setobject(obj.title);
+							dbData.last_opened_object_ts = Date.now();
+							dbData.opened_objects.push(obj.id);
+							let newObj = JSON.parse(JSON.stringify(dbData));
+							// newObj.last_opened_object_ts = Date.now();
+							// newObj.opened_objects.push(object_id);
+							delete newObj['_id'];
+							let queryData = {
+								"collection": "main",
+								"database": "geozhdan",
+								"dataSource": "geozhdan-main-db",
+								"upsert": false,
+								"filter": {"vk_userid": dbData.vk_userid},
+								"update": newObj
+							};
+							fetch('https://randomgod.7m.pl/rerequester.php', {
+								method: 'POST',
+								headers: {
+									"request-url": "https://eu-central-1.aws.data.mongodb-api.com/app/data-tvcew/endpoint/data/v1/action/updateOne",
+									'api-key': 'ODO1Pv2mQ0kzyqYmsviHtibJmiovEp9iJ0pKkoAsx32EMT4MCVcyzXvScJ20wITb',
+									'Content-Type': 'application/x-www-form-urlencoded'
+								},
+								body: "json="+encodeURIComponent(JSON.stringify(queryData))
+							})
+							.then(response => response.json())
+							.then(data => {
+								console.log('obj add result >> ', data)
+								setPopout(null);
+								if (data.modifiedCount > 0) {
+									activateModal('qr-ok');
+								} else if (data.matchedCount > 0 && data.modifiedCount == 0) {
+									activateModal('qr-exists');
+								} else {
+									dbData.opened_objects.pop(dbData.opened_objects.indexOf(obj.id));
+									activateModal('qr-error');
+								}
+							});
+						} else {
+							setPopout(null);
+							activateModal('qr-exists');
+						}
+						return;
+					}
+				});
+				if (!isFound) {
+					setPopout(null);
 					activateModal('qr-error');
-				} else {
-					qr_ok_setobject(obj.title);
-					const res = addObjectToList(obj.id);
-					if (res)
-						activateModal('qr-ok');
-					else
-						activateModal('qr-exists');
 				}
+				// let queryData = {
+				// 	"collection": "objects",
+				// 	"database": "geozhdan",
+				// 	"dataSource": "geozhdan-main-db",
+				// 	"filter": {"code": code}
+				// };
+				// fetch('https://randomgod.7m.pl/rerequester.php', {
+				// 	method: 'POST',
+				// 	headers: {
+				// 		"request-url": "https://eu-central-1.aws.data.mongodb-api.com/app/data-tvcew/endpoint/data/v1/action/findOne",
+				// 		'api-key': 'ODO1Pv2mQ0kzyqYmsviHtibJmiovEp9iJ0pKkoAsx32EMT4MCVcyzXvScJ20wITb',
+				// 		'Content-Type': 'application/x-www-form-urlencoded'
+				// 	},
+				// 	body: "json="+encodeURIComponent(JSON.stringify(queryData))
+				// })
+				// .then(response => response.json())
+				// .then(data => {
+				// 	const obj = data.document;
+				// 	if (obj) {
+				// 		if (dbData.opened_objects.indexOf(obj.id) > -1) {
+				// 			setPopout(null);
+				// 			activateModal('qr-exists');
+				// 		} else {
+							
+				// 		}
+				// 	} else {
+				// 		activateModal('qr-error');
+				// 	}
+				// })
+				// .catch(e => {console.log('find Object error', e)});
+
+				
+
+				// const process = async () => {
+				// 	const obj = await findObject(data);
+				// 	// setQRResult(obj);
+				// 	let modalId = '';
+				// 	if (!obj.hasOwnProperty('id')) {
+				// 		modalId = 'qr-error';
+				// 	} else {
+				// 		if (!qrProcessing)
+				// 			setQrProcessing(true);
+				// 		console.log('set qr: [indexOf:', dbData.opened_objects.indexOf(obj.id) + ', dbData:', dbData);
+				// 		if (dbData.opened_objects.indexOf(obj.id) > -1) {
+				// 			setPopout(null);
+				// 			modalId = 'qr-exists';
+				// 		} else {
+				// 			qr_ok_setobject(obj.title);
+				// 			const res = await addObjectToList(obj.id);
+				// 			setPopout(null);
+				// 			if (res == 1)
+				// 				modalId = 'qr-ok';
+				// 			else if (res == 0)
+				// 				modalId= 'qr-exists';
+				// 			else
+				// 				modalId = 'qr-error';
+				// 			} // todo уменьшить уровневость
+				// 		setQrProcessing(false);
+				// 		console.log('activate modal id', modalId);
+				// 		activateModal(modalId);
+				// 	}
+				// }
+				// const abc = await process();
 				break;
 			case 'VKWebAppOpenCodeReaderFailed':
 				// Обработка события в случае ошибки
-				console.log(event.detail.data.error_type, event.detail.data.error_data); 
-				activateModal('qr-error');     
+				console.log(event.detail.data.error_type, event.detail.data.error_data);    
 			break;
 		}
 	});
@@ -141,13 +256,13 @@ const Home = ({ id, go, dbData, activateModal, qr_ok_setobject }) => {
 				<Text className='info-name'>Дата последнего открытия</Text>
 				<Text className='info-text'>{formatTime(dbData.last_opened_object_ts)}{toUpdate}</Text>
 			</div>
-			<p>dbdata: {JSON.stringify(dbData)}</p>
-			<p>fetchobj: {JSON.stringify(qrResult)}</p>
+			{/* <p>dbdata: {JSON.stringify(dbData)}</p> */}
+			{/* <p>fetchobj: {JSON.stringify(qrResult)}</p> */}
 			</Div>
 			<div className='main__buttons'>
-				<Banner mode="image" asideMode='expand' className='banner' header="Карта лагеря" subheader="Открыть карту лагеря" background={<div style={{background: 'green'}}><Icon24Chevron style={{position: 'absolute', top: '50%', right: '16px', marginTop: '-12px'}}/></div>} onClick={go} data-to='map'></Banner>
 				<Banner mode="image" asideMode='expand' className='banner' header="Искать объекты" subheader="Открыть сканер QR-кода" background={<div style={{background: 'green'}}><Icon24Chevron style={{position: 'absolute', top: '50%', right: '16px', marginTop: '-12px'}}/></div>} onClick={openQRCodeScanner}></Banner>
 				<Banner mode="image" asideMode='expand' className='banner' header="Ваши открытия" subheader="Показать открытые объекты" background={<div style={{background: 'green'}}><Icon24Chevron style={{position: 'absolute', top: '50%', right: '16px', marginTop: '-12px'}}/></div>} onClick={go} data-to='listOfPlaces'></Banner>
+				<Banner mode="image" asideMode='expand' className='banner' header="Карта лагеря" subheader="Открыть карту лагеря" background={<div style={{background: 'green'}}><Icon24Chevron style={{position: 'absolute', top: '50%', right: '16px', marginTop: '-12px'}}/></div>} onClick={go} data-to='map'></Banner>
 			</div>
 		</div>
 	</Panel>
@@ -159,7 +274,8 @@ Home.propTypes = {
 	go: PropTypes.func.isRequired,
 	dbData: PropTypes.object.isRequired,
 	qr_ok_setobject: PropTypes.func.isRequired,
-	objects: PropTypes.object.isRequired
+	objects: PropTypes.array.isRequired,
+	setPopout: PropTypes.func.isRequired
 };
 
 export default Home;
