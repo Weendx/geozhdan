@@ -5,6 +5,7 @@ import "./Info.css"
 
 import { Panel, PanelHeader, Text, PanelHeaderBack, Div, Title, Header, Button } from '@vkontakte/vkui';
 
+
 const Info = ({ id, go, objects, targetObjectId}) => {
 	
     let obj = {};
@@ -37,12 +38,24 @@ const Info = ({ id, go, objects, targetObjectId}) => {
                     <div className='Info__details'>
                         <Header className='Info__details-header'>Интересные факты</Header>
                         {
-                            obj.info.facts.map(fact => (
+                            obj.info.facts.map(fact => {console.log('fact>>', fact); return (
                                 <div key={fact.id}>
                                     <Text key={fact.id+'_0'} className='Info__details-title'>{fact.title}</Text>
-                                    <Text key={fact.id+'_1'} className='Info__details-text'>{fact.text}</Text>
+                                    <Text key={fact.id+'_1'} className='Info__details-text'>
+                                        {fact.text.split("\n").map((txt, id) => {
+                                            if (txt == ' ') {
+                                                return (
+                                                    <br key={id}/>
+                                                )
+                                            } else {
+                                                return (
+                                                    <p key={id}>{txt}</p>
+                                                )
+                                            }
+                                        })}
+                                    </Text>
                                 </div>
-                            ))
+                            )})
                         }
 
                     </div>

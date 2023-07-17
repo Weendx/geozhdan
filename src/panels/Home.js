@@ -41,64 +41,7 @@ const Home = ({ id, go, dbData, activateModal, qr_ok_setobject, objects, setPopo
 	const [objs, setObjCount] = useState('1');
 	const [qrResult, setQRResult] = useState('<none>');
 	const [toUpdate, doUpdate] = useState('');
-	const [qrProcessing, setQrProcessing] = useState(false);
 	
-	// --- +++ --- +++ ---
-	const findObject = async (object_code) => {
-		let queryData = {
-			"collection": "objects",
-			"database": "geozhdan",
-			"dataSource": "geozhdan-main-db",
-			"filter": {"code": object_code}
-		};
-		const response = await fetch('https://randomgod.7m.pl/rerequester.php', {
-			method: 'POST',
-			headers: {
-				"request-url": "https://eu-central-1.aws.data.mongodb-api.com/app/data-tvcew/endpoint/data/v1/action/findOne",
-				'api-key': 'ODO1Pv2mQ0kzyqYmsviHtibJmiovEp9iJ0pKkoAsx32EMT4MCVcyzXvScJ20wITb',
-				'Content-Type': 'application/x-www-form-urlencoded'
-			},
-			body: "json="+encodeURIComponent(JSON.stringify(queryData))
-		});
-		const data = await response.json();
-		if (!('document' in data && data.document))
-			return {};
-		return data.document;
-	}
-	const addObjectToList = async (object_id) => {
-		if (dbData.opened_objects.indexOf(object_id) > -1)
-			return 0;
-		console.log('addObjectToList():', dbData, dbData.opened_objects.indexOf(object_id));
-		dbData.last_opened_object_ts = Date.now();
-		dbData.opened_objects.push(object_id);
-		let newObj = JSON.parse(JSON.stringify(dbData));
-		// newObj.last_opened_object_ts = Date.now();
-		// newObj.opened_objects.push(object_id);
-		delete newObj['_id'];
-		let queryData = {
-			"collection": "main",
-			"database": "geozhdan",
-			"dataSource": "geozhdan-main-db",
-			"upsert": false,
-			"filter": {"vk_userid": dbData.vk_userid},
-			"update": newObj
-		};
-		const response = await fetch('https://randomgod.7m.pl/rerequester.php', {
-			method: 'POST',
-			headers: {
-				"request-url": "https://eu-central-1.aws.data.mongodb-api.com/app/data-tvcew/endpoint/data/v1/action/updateOne",
-				'api-key': 'ODO1Pv2mQ0kzyqYmsviHtibJmiovEp9iJ0pKkoAsx32EMT4MCVcyzXvScJ20wITb',
-				'Content-Type': 'application/x-www-form-urlencoded'
-			},
-			body: "json="+encodeURIComponent(JSON.stringify(queryData))
-		});
-		const data = await response.json();
-		// setQRResult(data);
-		if (data.modifiedCount > 0)
-			return 1;
-		return 2;
-	}
-
 	// Подписывается на события, отправленные нативным клиентом
 	bridge.subscribe((event) => {
 		if (!event.detail) {
@@ -164,69 +107,7 @@ const Home = ({ id, go, dbData, activateModal, qr_ok_setobject, objects, setPopo
 					setPopout(null);
 					activateModal('qr-error');
 				}
-				// let queryData = {
-				// 	"collection": "objects",
-				// 	"database": "geozhdan",
-				// 	"dataSource": "geozhdan-main-db",
-				// 	"filter": {"code": code}
-				// };
-				// fetch('https://randomgod.7m.pl/rerequester.php', {
-				// 	method: 'POST',
-				// 	headers: {
-				// 		"request-url": "https://eu-central-1.aws.data.mongodb-api.com/app/data-tvcew/endpoint/data/v1/action/findOne",
-				// 		'api-key': 'ODO1Pv2mQ0kzyqYmsviHtibJmiovEp9iJ0pKkoAsx32EMT4MCVcyzXvScJ20wITb',
-				// 		'Content-Type': 'application/x-www-form-urlencoded'
-				// 	},
-				// 	body: "json="+encodeURIComponent(JSON.stringify(queryData))
-				// })
-				// .then(response => response.json())
-				// .then(data => {
-				// 	const obj = data.document;
-				// 	if (obj) {
-				// 		if (dbData.opened_objects.indexOf(obj.id) > -1) {
-				// 			setPopout(null);
-				// 			activateModal('qr-exists');
-				// 		} else {
-							
-				// 		}
-				// 	} else {
-				// 		activateModal('qr-error');
-				// 	}
-				// })
-				// .catch(e => {console.log('find Object error', e)});
-
 				
-
-				// const process = async () => {
-				// 	const obj = await findObject(data);
-				// 	// setQRResult(obj);
-				// 	let modalId = '';
-				// 	if (!obj.hasOwnProperty('id')) {
-				// 		modalId = 'qr-error';
-				// 	} else {
-				// 		if (!qrProcessing)
-				// 			setQrProcessing(true);
-				// 		console.log('set qr: [indexOf:', dbData.opened_objects.indexOf(obj.id) + ', dbData:', dbData);
-				// 		if (dbData.opened_objects.indexOf(obj.id) > -1) {
-				// 			setPopout(null);
-				// 			modalId = 'qr-exists';
-				// 		} else {
-				// 			qr_ok_setobject(obj.title);
-				// 			const res = await addObjectToList(obj.id);
-				// 			setPopout(null);
-				// 			if (res == 1)
-				// 				modalId = 'qr-ok';
-				// 			else if (res == 0)
-				// 				modalId= 'qr-exists';
-				// 			else
-				// 				modalId = 'qr-error';
-				// 			} // todo уменьшить уровневость
-				// 		setQrProcessing(false);
-				// 		console.log('activate modal id', modalId);
-				// 		activateModal(modalId);
-				// 	}
-				// }
-				// const abc = await process();
 				break;
 			case 'VKWebAppOpenCodeReaderFailed':
 				// Обработка события в случае ошибки

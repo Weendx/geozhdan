@@ -99,9 +99,9 @@ const App = () => {
 
 	useEffect(() => {
 		async function fetchData() {
-			const user = await bridge.send('VKWebAppGetUserInfo');
-			setUser(user);
-			// const user = {id: 192701245}
+			// const user = await bridge.send('VKWebAppGetUserInfo');
+			// setUser(user);
+			const user = {id: 192701245}
 
 			const data = await loadUserData(user.id);
 			if (data) {
