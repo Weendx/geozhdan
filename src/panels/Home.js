@@ -35,86 +35,135 @@ const formatTime = (timestamp_ms) => {
 	return  `${date} в ${time}`;
 }
 
-const openQRCodeScanner = () => { bridge.send("VKWebAppOpenCodeReader"); }
 
 const Home = ({ id, go, dbData, activateModal, qr_ok_setobject, objects, setPopout }) => {
 	const [objs, setObjCount] = useState('1');
 	const [qrResult, setQRResult] = useState('<none>');
 	const [toUpdate, doUpdate] = useState('');
 	
-	// Подписывается на события, отправленные нативным клиентом
-	bridge.subscribe((event) => {
-		if (!event.detail) {
-			return;
+	const findObject = async (object_code) => {
+		let queryData = {
+			"collection": "objects",
+			"database": "geozhdan",
+			"dataSource": "geozhdan-main-db",
+			"filter": {"code": object_code}
+		};
+		try {
+			const response = await fetch('https://randomgod.7m.pl/rerequester.php', {
+				method: 'POST',
+				headers: {
+					"request-url": "https://eu-central-1.aws.data.mongodb-api.com/app/data-tvcew/endpoint/data/v1/action/findOne",
+					'api-key': 'ODO1Pv2mQ0kzyqYmsviHtibJmiovEp9iJ0pKkoAsx32EMT4MCVcyzXvScJ20wITb',
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: "json="+encodeURIComponent(JSON.stringify(queryData))
+			});
+			const data = await response.json();
+			if (!('document' in data && data.document))
+				return null;
+			return data.document;
+		} catch {
+			const d = await findObject(object_code);
+			return d;
 		}
-		switch(event.detail.type) {
-			case 'VKWebAppOpenCodeReaderResult':
-				// Обработка события в случае успеха
-				console.log('bridge event.detail >>', event.detail);
-
-				const code = event.detail.data.code_data;
+	}
+	
+	const addObjectToList = async (obj) => {
+		dbData.last_opened_object_ts = Date.now();
+		dbData.opened_objects.push(obj.id);
+		let newObj = JSON.parse(JSON.stringify(dbData));
+		// newObj.last_opened_object_ts = Date.now();
+		// newObj.opened_objects.push(object_id);
+		delete newObj['_id'];
+		let queryData = {
+			"collection": "main",
+			"database": "geozhdan",
+			"dataSource": "geozhdan-main-db",
+			"upsert": false,
+			"filter": {"vk_userid": dbData.vk_userid},
+			"update": newObj
+		};
+		const request = async () => {
+			try {
+				const response = await fetch('https://randomgod.7m.pl/rerequester.php', {
+					method: 'POST',
+					headers: {
+						"request-url": "https://eu-central-1.aws.data.mongodb-api.com/app/data-tvcew/endpoint/data/v1/action/updateOne",
+						'api-key': 'ODO1Pv2mQ0kzyqYmsviHtibJmiovEp9iJ0pKkoAsx32EMT4MCVcyzXvScJ20wITb',
+						'Content-Type': 'application/x-www-form-urlencoded'
+					},
+					body: "json="+encodeURIComponent(JSON.stringify(queryData))
+				});
+				const data = await response.json();
+				
+				console.log('obj add result >> ', data)
+				setPopout(null);
+				if (data.modifiedCount > 0) {
+					activateModal('qr-ok');
+				} else if (data.matchedCount > 0 && data.modifiedCount == 0) {
+					activateModal('qr-exists');
+				} else {
+					dbData.opened_objects.pop(dbData.opened_objects.indexOf(obj.id));
+					activateModal('qr-error');
+				}
+			} catch {
+				await request();
+			}
+			
+		}
+		await request();
+	}
+	
+	const openQRCodeScanner = () => { 
+		bridge.send("VKWebAppOpenCodeReader")
+		.then(async (qrdata) => {
+			if (qrdata.code_data) {
+				console.log('bridge onQrResult >>', qrdata);
+				
+				const code = qrdata.code_data;
 				let isFound = false;
 				setPopout(<ScreenSpinner size='large' />);
-				objects.map(obj => {
-					if (obj.code == code) {
-						isFound = true;
-						if (dbData.opened_objects.indexOf(obj.id) == -1) {
-							qr_ok_setobject(obj.title);
-							dbData.last_opened_object_ts = Date.now();
-							dbData.opened_objects.push(obj.id);
-							let newObj = JSON.parse(JSON.stringify(dbData));
-							// newObj.last_opened_object_ts = Date.now();
-							// newObj.opened_objects.push(object_id);
-							delete newObj['_id'];
-							let queryData = {
-								"collection": "main",
-								"database": "geozhdan",
-								"dataSource": "geozhdan-main-db",
-								"upsert": false,
-								"filter": {"vk_userid": dbData.vk_userid},
-								"update": newObj
-							};
-							fetch('https://randomgod.7m.pl/rerequester.php', {
-								method: 'POST',
-								headers: {
-									"request-url": "https://eu-central-1.aws.data.mongodb-api.com/app/data-tvcew/endpoint/data/v1/action/updateOne",
-									'api-key': 'ODO1Pv2mQ0kzyqYmsviHtibJmiovEp9iJ0pKkoAsx32EMT4MCVcyzXvScJ20wITb',
-									'Content-Type': 'application/x-www-form-urlencoded'
-								},
-								body: "json="+encodeURIComponent(JSON.stringify(queryData))
-							})
-							.then(response => response.json())
-							.then(data => {
-								console.log('obj add result >> ', data)
-								setPopout(null);
-								if (data.modifiedCount > 0) {
-									activateModal('qr-ok');
-								} else if (data.matchedCount > 0 && data.modifiedCount == 0) {
-									activateModal('qr-exists');
-								} else {
-									dbData.opened_objects.pop(dbData.opened_objects.indexOf(obj.id));
-									activateModal('qr-error');
-								}
-							});
-						} else {
-							setPopout(null);
-							activateModal('qr-exists');
-						}
-						return;
+				const obj = await findObject(code);
+				console.log('got object in qr >> ', obj);
+				if (obj) {
+					isFound = true;
+					if (dbData.opened_objects.indexOf(obj.id) == -1) {
+						qr_ok_setobject(obj.title);
+						await addObjectToList(obj);
+					} else {
+						setPopout(null);
+						activateModal('qr-exists');
 					}
-				});
+				}
 				if (!isFound) {
 					setPopout(null);
 					activateModal('qr-error');
+					console.log("UWAGA");
 				}
+			}
+		}) 
+		.catch((error) => {
+			// Ошибка
+			console.log(error);
+		});
+	}
+	// Подписывается на события, отправленные нативным клиентом
+	// bridge.subscribe(async (event) => {
+	// 	if (!event.detail) {
+	// 		return;
+	// 	}
+	// 	switch(event.detail.type) {
+	// 		case 'VKWebAppOpenCodeReaderResult':
+	// 			// Обработка события в случае успеха
 				
-				break;
-			case 'VKWebAppOpenCodeReaderFailed':
-				// Обработка события в случае ошибки
-				console.log(event.detail.data.error_type, event.detail.data.error_data);    
-			break;
-		}
-	});
+				
+	// 			break;
+	// 			case 'VKWebAppOpenCodeReaderFailed':
+	// 				// Обработка события в случае ошибки
+	// 				console.log(event.detail.data.error_type, event.detail.data.error_data);    
+	// 				break;
+	// 			}
+	// });
 
 	
 

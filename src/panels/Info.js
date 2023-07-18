@@ -15,7 +15,7 @@ const Info = ({ id, go, objects, targetObjectId}) => {
             return;
         }
     });
-    console.log(objects, targetObjectId);
+    // console.log(objects, targetObjectId);
 	return (
 	<Panel id={id} style={{boxSizing: 'border-box'}}>
 		<div className='Info__main-panel'>
@@ -27,7 +27,19 @@ const Info = ({ id, go, objects, targetObjectId}) => {
                             obj.info.data.map( row => (
                                 <div key={row.id}>
                                     <Text className='Info__info-name'>{row.title}</Text>
-                                    <Text className='Info__info-text'>{row.text}</Text>        
+                                    <Text className='Info__info-text'>
+                                        {row.text.split("\n").map((txt, id) => {
+                                            if (txt == ' ' || txt == '') {
+                                                return (
+                                                    <br key={id}/>
+                                                )
+                                            } else {
+                                                return (
+                                                    <p key={id}>{txt}</p>
+                                                )
+                                            }
+                                        })}    
+                                    </Text>        
                                 </div>
                             ))
                         }
@@ -43,7 +55,7 @@ const Info = ({ id, go, objects, targetObjectId}) => {
                                     <Text key={fact.id+'_0'} className='Info__details-title'>{fact.title}</Text>
                                     <Text key={fact.id+'_1'} className='Info__details-text'>
                                         {fact.text.split("\n").map((txt, id) => {
-                                            if (txt == ' ') {
+                                            if (txt == ' ' || txt == '') {
                                                 return (
                                                     <br key={id}/>
                                                 )

@@ -1,6 +1,9 @@
 .modal__button_primary {
     background: green !important;
 }
+.modal__button_primary span{
+    color: #f3f3f3;
+}
 
 /* Корректировки */
 .info-name {

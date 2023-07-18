@@ -8,18 +8,33 @@ import './ListOfPlaces.css'
 
 const ListOfPlaces = ({id, go, dbData, objects}) => {
     const [isObjectsExists, setObjectsFlag] = useState(false);
+    const orderedObjects = [];
+    objects.map(obj => {
+        if (dbData.opened_objects.indexOf(obj.id) > -1)
+            orderedObjects.push(obj);
+    });
     return (
 	<Panel id={id} style={{boxSizing: 'border-box'}}>
         <div className='main-panel'>
             <PanelHeader before={<PanelHeaderBack onClick={go} data-to="home"/>}>Объекты в лагере</PanelHeader>
             <Div>
                 {
-                    objects.map(el => {
-                        if (dbData.opened_objects.indexOf(el.id) > -1) {
+                    dbData.opened_objects.map((obj_id, key) => {
+                        // console.log('ListOfPlaces gen >>', el.id, id)
+                        let flag = false;
+                        let obj = {};
+                        objects.map(el => {
+                            if (el.id == obj_id) {
+                                flag = true;
+                                obj = el;
+                                return;
+                            }
+                        });
+                        if (flag) {
                             if (!isObjectsExists)
                                 setObjectsFlag(true);
                             return (
-                                <Banner key={el.id} mode="image" asideMode='expand' className='ListOfPlaces__banner' header={el.title} subheader={el.subtitle} background={<div style={{background: 'green'}}><Icon24Chevron style={{position: 'absolute', top: '50%', right: '16px', marginTop: '-12px'}}/></div>} onClick={go} data-to='info' data-selected_object_id={el.id}></Banner>
+                                <Banner key={key} mode="image" asideMode='expand' className='ListOfPlaces__banner' header={obj.title} subheader={obj.subtitle} background={<div style={{background: 'green'}}><Icon24Chevron style={{position: 'absolute', top: '50%', right: '16px', marginTop: '-12px'}}/></div>} onClick={go} data-to='info' data-selected_object_id={obj.id}></Banner>
                             );
                         }
                     })

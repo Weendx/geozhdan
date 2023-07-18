@@ -51,11 +51,13 @@
     font-style: italic;
     font-weight: 600;
     margin: 0.25rem 0;
+    color: #131313;
     /* color:rgb(241, 241, 241); */
 }
 
 .Info__details-text {
     font-size: 0.95em;
+    color: #131313;
     /* color:rgb(241, 241, 241); */
 }
 

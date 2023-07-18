@@ -57,20 +57,25 @@ const App = () => {
 				"collection": "main",
 				"database": "geozhdan",
 				"dataSource": "geozhdan-main-db",
-				"document": {"vk_userid": vk_userid, "opened_objects": [], "last_opened_object_ts": -1}
+				"document": {"vk_userid": vk_userid, "opened_objects": [5, 1], "last_opened_object_ts": Date.now()}
 			};
-			const response = await fetch('https://randomgod.7m.pl/rerequester.php', {
-				method: 'POST',
-				headers: {
-					"request-url": "https://eu-central-1.aws.data.mongodb-api.com/app/data-tvcew/endpoint/data/v1/action/insertOne",
-					'api-key': 'ODO1Pv2mQ0kzyqYmsviHtibJmiovEp9iJ0pKkoAsx32EMT4MCVcyzXvScJ20wITb',
-					'Content-Type': 'application/x-www-form-urlencoded'
-				},
-				body: "json="+encodeURIComponent(JSON.stringify(queryData))
-			});
-			const t = await response.text();
-			setTestText(t);
-			return queryData.document;
+			try {
+				const response = await fetch('https://randomgod.7m.pl/rerequester.php', {
+					method: 'POST',
+					headers: {
+						"request-url": "https://eu-central-1.aws.data.mongodb-api.com/app/data-tvcew/endpoint/data/v1/action/insertOne",
+						'api-key': 'ODO1Pv2mQ0kzyqYmsviHtibJmiovEp9iJ0pKkoAsx32EMT4MCVcyzXvScJ20wITb',
+						'Content-Type': 'application/x-www-form-urlencoded'
+					},
+					body: "json="+encodeURIComponent(JSON.stringify(queryData))
+				});
+				const t = await response.text();
+				setTestText(t);
+				return queryData.document;
+			} catch {
+				const d = await loadUserData(vk_userid);
+				return d;
+			}
 		}
 	}
 
@@ -81,20 +86,25 @@ const App = () => {
 			"dataSource": "geozhdan-main-db",
 			"filter": {}
 		};
-		const response = await fetch('https://randomgod.7m.pl/rerequester.php', {
-			method: 'POST',
-			headers: {
-				"request-url": "https://eu-central-1.aws.data.mongodb-api.com/app/data-tvcew/endpoint/data/v1/action/find",
-				'api-key': 'ODO1Pv2mQ0kzyqYmsviHtibJmiovEp9iJ0pKkoAsx32EMT4MCVcyzXvScJ20wITb',
-				'Content-Type': 'application/x-www-form-urlencoded'
-			},
-			body: "json="+encodeURIComponent(JSON.stringify(queryData))
-		});
-		const data = await response.json();
-		if (!('documents' in data))
-			throw "No data";
-		
-		return data.documents;
+		try {
+			const response = await fetch('https://randomgod.7m.pl/rerequester.php', {
+				method: 'POST',
+				headers: {
+					"request-url": "https://eu-central-1.aws.data.mongodb-api.com/app/data-tvcew/endpoint/data/v1/action/find",
+					'api-key': 'ODO1Pv2mQ0kzyqYmsviHtibJmiovEp9iJ0pKkoAsx32EMT4MCVcyzXvScJ20wITb',
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: "json="+encodeURIComponent(JSON.stringify(queryData))
+			});
+			const data = await response.json();
+			if (!('documents' in data))
+				throw "No data";
+			
+			return data.documents;
+		} catch {
+			const d = await loadObjectList();
+			return d;
+		}
 	}
 
 	useEffect(() => {
