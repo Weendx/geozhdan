@@ -12,10 +12,6 @@ import ListOfPlaces from './panels/ListOfPlaces';
 import './App.css';
 import Info from './panels/Info';
 
-const SERVKEY = '8h1-3kh@jns';
-
-
-
 
 
 const App = () => {
@@ -57,7 +53,7 @@ const App = () => {
 				"collection": "main",
 				"database": "geozhdan",
 				"dataSource": "geozhdan-main-db",
-				"document": {"vk_userid": vk_userid, "opened_objects": [5, 1], "last_opened_object_ts": Date.now()}
+				"document": {"vk_userid": vk_userid, "opened_objects": [], "last_opened_object_ts": -1}
 			};
 			try {
 				const response = await fetch('https://randomgod.7m.pl/rerequester.php', {
@@ -109,9 +105,9 @@ const App = () => {
 
 	useEffect(() => {
 		async function fetchData() {
-			// const user = await bridge.send('VKWebAppGetUserInfo');
-			// setUser(user);
-			const user = {id: 192701245}
+			const user = await bridge.send('VKWebAppGetUserInfo');
+			setUser(user);
+			// const user = {id: 192701245}
 
 			const data = await loadUserData(user.id);
 			if (data) {
