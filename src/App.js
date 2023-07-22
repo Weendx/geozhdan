@@ -8,7 +8,6 @@ import StartWindow from './panels/StartWindow';
 import Home from './panels/Home';
 import MapPanel from './panels/MapPanel';
 import ListOfPlaces from './panels/ListOfPlaces';
-// import QRCodeView from './panels/QRCodeView';
 import './App.css';
 import Info from './panels/Info';
 
@@ -25,7 +24,6 @@ const App = () => {
 	const [modalQROkObject, setQROkObject] = useState('Геождан');
 	const [selectedObject, selectObject] = useState(null);
 	const [prevPanelId, setPrevPanelId] = useState(null);
-	const [testText, setTestText] = useState('testtext');
 
 	const loadUserData = async (vk_userid) => {
 		let queryData = {
@@ -66,7 +64,6 @@ const App = () => {
 					body: "json="+encodeURIComponent(JSON.stringify(queryData))
 				});
 				const t = await response.text();
-				setTestText(t);
 				return queryData.document;
 			} catch {
 				const d = await loadUserData(vk_userid);
@@ -122,28 +119,6 @@ const App = () => {
 			}
 		}
 		fetchData();
-					
-		// var config = {
-		// 	method: 'get',
-		// 	// url: 'https://eu-central-1.aws.data.mongodb-api.com/app/data-tvcew/endpoint/data/v1/action/findOne',
-		// 	url: 'https://randomgod.7m.pl/test.php',
-		// 	headers: {
-		// 	'Content-Type': 'application/json',
-		// 	'api-key': 'ODO1Pv2mQ0kzyqYmsviHtibJmiovEp9iJ0pKkoAsx32EMT4MCVcyzXvScJ20wITb',
-		// 	},
-		// 	data: data,
-		// };
-		
-					
-		// axios(config)
-		// 	.then(function (response) {
-		// 		console.log(response.data);
-		// 	})
-		// 	.catch(function (error) {
-		// 		console.log(error);
-		// 	});
-
-		
 
 	}, []);
 

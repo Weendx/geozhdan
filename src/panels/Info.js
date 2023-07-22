@@ -15,7 +15,7 @@ const Info = ({ id, go, objects, targetObjectId}) => {
             return;
         }
     });
-    // console.log(objects, targetObjectId);
+    
 	return (
 	<Panel id={id} style={{boxSizing: 'border-box'}}>
 		<div className='Info__main-panel'>

@@ -8,7 +8,6 @@ import { Panel, PanelHeader, Text, Banner, Div, Title, ScreenSpinner } from '@vk
 import { Icon24Chevron } from '@vkontakte/icons';
 
 
-
 const getObjectsString = (count) => {
 	if (count == 1)
 		return '1 объект';
@@ -72,8 +71,6 @@ const Home = ({ id, go, dbData, activateModal, qr_ok_setobject, objects, setPopo
 		dbData.last_opened_object_ts = Date.now();
 		dbData.opened_objects.push(obj.id);
 		let newObj = JSON.parse(JSON.stringify(dbData));
-		// newObj.last_opened_object_ts = Date.now();
-		// newObj.opened_objects.push(object_id);
 		delete newObj['_id'];
 		let queryData = {
 			"collection": "main",
@@ -147,47 +144,23 @@ const Home = ({ id, go, dbData, activateModal, qr_ok_setobject, objects, setPopo
 			console.log(error);
 		});
 	}
-	// Подписывается на события, отправленные нативным клиентом
-	// bridge.subscribe(async (event) => {
-	// 	if (!event.detail) {
-	// 		return;
-	// 	}
-	// 	switch(event.detail.type) {
-	// 		case 'VKWebAppOpenCodeReaderResult':
-	// 			// Обработка события в случае успеха
-				
-				
-	// 			break;
-	// 			case 'VKWebAppOpenCodeReaderFailed':
-	// 				// Обработка события в случае ошибки
-	// 				console.log(event.detail.data.error_type, event.detail.data.error_data);    
-	// 				break;
-	// 			}
-	// });
-
 	
-
 	useEffect(() => {
 		const div = document.querySelector('.main-panel');
 		div.style.height = document.body.offsetHeight + 'px';
 	})
-
-	// -- render section --
-
 
 	return (
 	<Panel id={id}  style={{boxSizing: 'border-box'}}>
 		<div className='main-panel'>
 			<PanelHeader className='name-menu'>Главная</PanelHeader>
 			<Div>
-			<div className='info-panel'>
-				<Text className='info-name'>Открыто объектов</Text>
-				<Text className='info-text'>{getObjectsString(dbData.opened_objects.length)} из {objects.length}{toUpdate}</Text>
-				<Text className='info-name'>Дата последнего открытия</Text>
-				<Text className='info-text'>{formatTime(dbData.last_opened_object_ts)}{toUpdate}</Text>
-			</div>
-			{/* <p>dbdata: {JSON.stringify(dbData)}</p> */}
-			{/* <p>fetchobj: {JSON.stringify(qrResult)}</p> */}
+				<div className='info-panel'>
+					<Text className='info-name'>Открыто объектов</Text>
+					<Text className='info-text'>{getObjectsString(dbData.opened_objects.length)} из {objects.length}{toUpdate}</Text>
+					<Text className='info-name'>Дата последнего открытия</Text>
+					<Text className='info-text'>{formatTime(dbData.last_opened_object_ts)}{toUpdate}</Text>
+				</div>
 			</Div>
 			<div className='main__buttons'>
 				<Banner mode="image" asideMode='expand' className='banner' header="Искать объекты" subheader="Открыть сканер QR-кода" background={<div style={{background: 'green'}}><Icon24Chevron style={{position: 'absolute', top: '50%', right: '16px', marginTop: '-12px'}}/></div>} onClick={openQRCodeScanner}></Banner>
@@ -196,7 +169,7 @@ const Home = ({ id, go, dbData, activateModal, qr_ok_setobject, objects, setPopo
 			</div>
 		</div>
 	</Panel>
-);
+	);
 }
 
 Home.propTypes = {
