@@ -1,0 +1,73 @@
+.Info__main-panel > * {
+    font-family: 'Montserrat';
+}
+
+.Info__info {
+    background: #11853d;
+    padding: 1rem;
+    border-radius: 6px;
+}
+
+.Info__info > * {
+    margin: 0.4rem 0;
+}
+
+.Info__info-name {
+    font-size: 0.92em;
+    color: #d3d3d3;
+}
+
+.Info__info-text {
+    padding-left: 0.8em;
+    padding-top: 0.2em;
+    color: rgb(241, 241, 241);
+    font-weight: 600;
+}
+
+.Info__details {
+    background: #a4da92;
+    /* background: #aace70; */
+    /* background: #e2f9bf; */
+    border-radius: 8px;
+    margin-top: 3rem;
+}
+
+.Info__details-header {
+    background: #11853d;
+    /* background: #95bf53; */
+    border-radius: 8px;
+
+}
+
+.Info__details-header + div {
+    padding: 0.5rem 1rem;
+}
+
+.Info__details-header span {
+    color:rgb(241, 241, 241);   
+}
+
+.Info__details-title {
+    font-style: italic;
+    font-weight: 600;
+    margin: 0.25rem 0;
+    color: #131313;
+    /* color:rgb(241, 241, 241); */
+}
+
+.Info__details-text {
+    font-size: 0.95em;
+    color: #131313;
+    /* color:rgb(241, 241, 241); */
+}
+
+.Info__btn-map {
+    margin-top: 4rem;
+    border-radius: 0.25rem;
+    background: green;
+    width: 100%;
+    font-size: 0.95em;
+    font-weight: 600;
+    color: rgb(241, 241, 241);
+    padding: 1rem;
+}

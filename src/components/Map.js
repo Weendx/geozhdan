@@ -13,6 +13,7 @@ const Map = ( props ) => {
     console.log(props.markers)
     const objectRef = useRef(null);
     const controlRef = useRef(null);
+    const wrapperRef = useRef(null);
     const [isDragging, setDragging] = useState(false);
     const [transform, setTransform] = useState('');
     const [shiftX, setShiftX] = useState(0);
@@ -25,13 +26,15 @@ const Map = ( props ) => {
         const object = objectRef.current;
         const sensitivity = 0.7;
 
+        // Центрирование карты
+        object.style.transform = `translate(${shiftX}px, ${shiftY}px)`;
+
         control.onmousedown = (e) => {
-            console.log('down');
             setDragging(true);
             setStartX(e.clientX);
             setStartY(e.clientY);
         };
-        control.onmouseup = () => { console.log('up'); setDragging(false); };
+        control.onmouseup = () => { setDragging(false); };
         control.onmousemove = (e) => {
             if (!isDragging) return;
             const tmpShiftX = shiftX + (e.clientX - startX) * sensitivity;
@@ -46,14 +49,13 @@ const Map = ( props ) => {
             
             let tr = `translate(${shiftX}px, ${shiftY}px)`;
             object.style.transform = tr;
-            console.log('drag', e.movementX, e.movementY, tr, object.style.transform, e.clientX - startX, e.clientY - startY);
+            // console.log('drag', e.movementX, e.movementY, tr, object.style.transform, e.clientX - startX, e.clientY - startY);
         }
         control.ondragstart = (e) => {
             e.preventDefault();
         }
 
         control.ontouchstart = (e) => {
-            console.log('down');
             setDragging(true);
             setStartX(e.touches[0].clientX);
             setStartY(e.touches[0].clientY);
@@ -81,10 +83,27 @@ const Map = ( props ) => {
 
     }, [isDragging, startX, startY]);
 
-    return (
-        <div className={'zhdanMap' + (props.className ? ' ' + props.className : '')} id={props.id}>
+    useEffect(() => {
+        const canvas = objectRef.current;
+        const wrapper = wrapperRef.current;
 
-            <div ref={objectRef} className='zhdanMap__canvas'>
+        const padding = 6; // potential bug  
+        let posX = wrapper.offsetWidth - padding;
+        let posY = wrapper.offsetHeight / 2 - padding;
+        if ('centerAt' in props) {
+            posX += props.centerAt?.x * scale * -1 - canvas.offsetWidth + document.body.offsetWidth / 2;
+            posY += props.centerAt?.y * scale * -1;
+        }
+        setShiftX(posX);
+        setShiftY(posY);
+        setTransform(`translate(${posX}px, ${posY}px)`);
+        console.log("Center map:", transform);
+    }, [props.centerAt]);
+
+    return (
+        <div ref={wrapperRef} className={'zhdanMap' + (props.className ? ' ' + props.className : '')} id={props.id}>
+
+            <div ref={objectRef} className='zhdanMap__canvas' style={{ transform: transform }}>
                 <object className="zhdanMap__map" data={map}></object>
                 {
                     props.markers.map(el => <Marker key={el.name} style={{ transform: `translate(${el.posX * scale}px, ${el.posY * scale}px)` }} onClick={el.onClick} />)
@@ -99,7 +118,8 @@ const Map = ( props ) => {
 Map.proptypes = {
     id: PropTypes.integer,
     className: PropTypes.string,
-    markers: PropTypes.array
+    markers: PropTypes.array,
+    centerAt: PropTypes.array, // {x: 1, y: 9}
 }
 
 export default Map;

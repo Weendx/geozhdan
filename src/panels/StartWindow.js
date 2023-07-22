@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import "./StartWindow.css"
 
-import geozhdan2 from "../img/geozhdan2.png";
+import geozhdan2 from "../img/geozhdan2.svg";
 
 import { Panel, Div} from '@vkontakte/vkui';
 
